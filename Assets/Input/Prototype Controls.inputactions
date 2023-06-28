@@ -16,39 +16,30 @@
                 },
                 {
                     "name": "Jump",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "c273c135-dffa-454b-be33-500c7408aa88",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Self-Destruct",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "6f680fd5-594c-435d-8de6-31e6b8100310",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Interact",
-                    "type": "Button",
-                    "id": "d509668a-656a-4839-923e-f185be0065a2",
+                    "type": "Value",
+                    "id": "01223c57-06c0-40f7-962c-46f883268a56",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Continue",
-                    "type": "Button",
-                    "id": "529a9113-85fe-4a53-bcd2-696e2520abcc",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -186,34 +177,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c0d302b5-fa38-4958-90e2-68ae215ca09e",
-                    "path": "<Keyboard>/#(E)",
+                    "id": "40daebe1-c26c-499f-94fb-06a07a46d2d4",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "41770d83-6a7d-4376-a051-0978200d49ea",
-                    "path": "<Keyboard>/enter",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continue",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3f706d9c-18b1-4306-8928-6aa77012c7bb",
-                    "path": "<Keyboard>/numpadEnter",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Continue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
