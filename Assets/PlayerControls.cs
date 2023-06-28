@@ -115,20 +115,24 @@ public class PlayerControls : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-         if (collision.gameObject.name.StartsWith("Relic"))
+        if (collision.gameObject.name.StartsWith("Relic"))
         {
-            canPickupRelic = true;
-            currentRelic = collision.gameObject;
+        canPickupRelic = true;
+        currentRelic = collision.gameObject;
         }
         else if (collision.gameObject.tag == "Trap")
         {
-            StartCoroutine(deathLogic());
+        StartCoroutine(deathLogic());
+        }
+        else if (collision.gameObject.tag == "Finish")
+        {
+            popupManager.showFinishingPopup();
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name.Equals("Relic"))
+        if (collision.gameObject.name.StartsWith("Relic"))
         {
             canPickupRelic = false;
             currentRelic = null;
@@ -154,6 +158,7 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
+    // Continue through Popup logic
     private void onContinueStarted(InputAction.CallbackContext value)
     {
         if (popupManager.isPopupOpen)
