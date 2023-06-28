@@ -97,11 +97,6 @@ public class PlayerControls : MonoBehaviour
     }
 
     // Relic Pickup Controls/Death trigger
-
-    private void testFunction()
-    {
-        Debug.Log("This is being called");
-    }
     private IEnumerator deathLogic()
     {
         isAlive = false;
