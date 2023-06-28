@@ -62,6 +62,15 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Continue (Popup)"",
+                    ""type"": ""Value"",
+                    ""id"": ""93bfbc6e-12fa-4826-8c12-b8228ac7e384"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -207,6 +216,28 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f6c1b57f-9cf9-42fd-8a36-76cc278627c8"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continue (Popup)"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""021aa5a2-e861-4725-87e4-6df321ff8344"",
+                    ""path"": ""<Keyboard>/numpadEnter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Continue (Popup)"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -219,6 +250,7 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_SelfDestruct = m_Player.FindAction("Self-Destruct", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_ContinuePopup = m_Player.FindAction("Continue (Popup)", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,6 +316,7 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_SelfDestruct;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_ContinuePopup;
     public struct PlayerActions
     {
         private @PrototypeControls m_Wrapper;
@@ -292,6 +325,7 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @SelfDestruct => m_Wrapper.m_Player_SelfDestruct;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @ContinuePopup => m_Wrapper.m_Player_ContinuePopup;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -313,6 +347,9 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @ContinuePopup.started += instance.OnContinuePopup;
+            @ContinuePopup.performed += instance.OnContinuePopup;
+            @ContinuePopup.canceled += instance.OnContinuePopup;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -329,6 +366,9 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @ContinuePopup.started -= instance.OnContinuePopup;
+            @ContinuePopup.performed -= instance.OnContinuePopup;
+            @ContinuePopup.canceled -= instance.OnContinuePopup;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -352,5 +392,6 @@ public partial class @PrototypeControls: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnSelfDestruct(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnContinuePopup(InputAction.CallbackContext context);
     }
 }
