@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PopupManager : MonoBehaviour
 {
-    public bool isPopupOpen = false;
+    public bool isPopupOpen = true;
     private GameObject popup = null;
     [SerializeField] private GameObject relicPopup;
     [SerializeField] private GameObject relic2Popup;
+    [SerializeField] private GameObject startingPopup;
     Dictionary<string, GameObject> relicDict;
 
     private void Awake()
@@ -15,6 +16,7 @@ public class PopupManager : MonoBehaviour
         relicDict = new Dictionary<string, GameObject>();
         relicDict.Add("Relic", relicPopup);
         relicDict.Add("Relic2", relic2Popup);
+        popup = startingPopup;
     }
 
     public void showRelicPopup(string relicObjName)
