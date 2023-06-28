@@ -6,9 +6,9 @@ using TMPro;
 
 public class LogicScript : MonoBehaviour
 {
-    private int livesCounter = 0;
+    public int livesCounter = 0;
     public TextMeshProUGUI livesCounterText;
-    private int relicsCounter = 0;
+    public int relicsCounter = 0;
     public TextMeshProUGUI relicsCounterText;
 
     public void addLife()
