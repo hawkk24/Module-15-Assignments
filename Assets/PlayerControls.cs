@@ -9,6 +9,7 @@ public class PlayerControls : MonoBehaviour
     private Rigidbody2D rb = null;
     private BoxCollider2D coll;
     private LogicScript logicScript;
+    private PopupManager popupManager;
 
     [SerializeField] private LayerMask jumpableGround;
 
@@ -31,6 +32,7 @@ public class PlayerControls : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<BoxCollider2D>();
         logicScript = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
+        popupManager = GameObject.FindGameObjectWithTag("PopupManager").GetComponent<PopupManager>();
     }
 
     private void OnEnable()
@@ -42,6 +44,7 @@ public class PlayerControls : MonoBehaviour
         input.Player.Jump.canceled += onJumpCancelled;
         input.Player.Interact.started += onInteractStarted;
         input.Player.SelfDestruct.started += onSelfDestructStarted;
+        input.Player.ContinuePopup.started += onContinueStarted;
     }
 
     private void OnDisable()
@@ -53,6 +56,7 @@ public class PlayerControls : MonoBehaviour
         input.Player.Jump.canceled -= onJumpCancelled;
         input.Player.Interact.started -= onInteractStarted;
         input.Player.SelfDestruct.started -= onSelfDestructStarted;
+        input.Player.ContinuePopup.started -= onContinueStarted;
     }
 
     // Movement controls
@@ -62,7 +66,7 @@ public class PlayerControls : MonoBehaviour
         {
             verticalInput = 0;
         }
-        if (isAlive)
+        if (isAlive && !popupManager.isPopupOpen)
         {
             rb.velocity = new Vector2(horizontalInput * moveSpeed, verticalInput * jumpSpeed);
         }
@@ -133,15 +137,28 @@ public class PlayerControls : MonoBehaviour
 
     private void onSelfDestructStarted(InputAction.CallbackContext value)
     {
-        StartCoroutine(deathLogic());
+        if (!popupManager.isPopupOpen)
+        {
+            StartCoroutine(deathLogic());
+        }
     }
 
     private void onInteractStarted(InputAction.CallbackContext value)
     {
         if (canPickupRelic && currentRelic is not null)
         {
+            popupManager.showRelicPopup(currentRelic.name);
             Destroy(currentRelic);
+            currentRelic = null;
             logicScript.addRelic();
+        }
+    }
+
+    private void onContinueStarted(InputAction.CallbackContext value)
+    {
+        if (popupManager.isPopupOpen)
+        {
+            popupManager.hidePopup();
         }
     }
 }
