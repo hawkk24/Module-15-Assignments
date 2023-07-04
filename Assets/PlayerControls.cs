@@ -16,6 +16,7 @@ public class PlayerControls : MonoBehaviour
     private bool isAlive = true;
     private float horizontalInput = 0f;
     private float verticalInput = 0f;
+    private float jumpStartY = 0f;
     private bool canPickupRelic = false;
     private GameObject currentRelic = null;
 
@@ -40,7 +41,7 @@ public class PlayerControls : MonoBehaviour
         input.Enable();
         input.Player.Movement.performed += onMovePerformed;
         input.Player.Movement.canceled += onMoveCancelleded;
-        input.Player.Jump.performed += onJumpStarted;
+        input.Player.Jump.performed += onJumpPerformed;
         input.Player.Jump.canceled += onJumpCancelled;
         input.Player.Interact.started += onInteractStarted;
         input.Player.SelfDestruct.started += onSelfDestructStarted;
@@ -52,7 +53,7 @@ public class PlayerControls : MonoBehaviour
         input.Disable();
         input.Player.Movement.performed -= onMovePerformed;
         input.Player.Movement.canceled -= onMoveCancelleded;
-        input.Player.Jump.started -= onJumpStarted;
+        input.Player.Jump.started -= onJumpPerformed;
         input.Player.Jump.canceled -= onJumpCancelled;
         input.Player.Interact.started -= onInteractStarted;
         input.Player.SelfDestruct.started -= onSelfDestructStarted;
@@ -62,7 +63,7 @@ public class PlayerControls : MonoBehaviour
     // Movement controls
     private void FixedUpdate()
     {
-        if (!isGrounded() && rb.position.y > 1.5)
+        if (!isGrounded() && rb.position.y > jumpStartY + maxHeight)
         {
             verticalInput = 0;
         }
@@ -82,11 +83,12 @@ public class PlayerControls : MonoBehaviour
         horizontalInput = 0;
     }
 
-    private void onJumpStarted(InputAction.CallbackContext value)
+    private void onJumpPerformed(InputAction.CallbackContext value)
     {
         if (isGrounded())
         {
             verticalInput = 1;
+            jumpStartY = rb.position.y;
         }
     }
 

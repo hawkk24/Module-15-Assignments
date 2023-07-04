@@ -16105,7 +16105,7 @@ Rigidbody2D:
   m_Mass: 1.4683092
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 20
+  m_GravityScale: 30
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -16197,7 +16197,7 @@ MonoBehaviour:
     m_Bits: 64
   moveSpeed: 10
   jumpSpeed: 20
-  maxHeight: 1
+  maxHeight: 1.5
   deathExplosion: {fileID: 4794043405585894037, guid: 37138c0c33167b04fa1fb90b7f5a794f, type: 3}
   spentPC: {fileID: 8799500092363672976, guid: a0e7c46c0f3601043afeec872f24567e, type: 3}
 --- !u!1 &1992375318
