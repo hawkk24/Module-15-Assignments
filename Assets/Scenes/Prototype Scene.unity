@@ -806,7 +806,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &632858523
@@ -15410,7 +15410,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &1635727302
@@ -16134,6 +16134,7 @@ GameObject:
   - component: {fileID: 1992375321}
   - component: {fileID: 1992375320}
   - component: {fileID: 1992375319}
+  - component: {fileID: 1992375322}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -16207,6 +16208,51 @@ Transform:
   m_Father: {fileID: 1938901996}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1992375322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992375318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b8a9cd70edbb95479e9ef15aabd9fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.5335089
+      outSlope: 0.5335089
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.19318779
+      value: 0.1030674
+      inSlope: 0.21592866
+      outSlope: 0.21592866
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3772542
+    - serializedVersion: 3
+      time: 1
+      value: 0.004906416
+      inSlope: -0.12166522
+      outSlope: -0.12166522
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &2119673625
 PrefabInstance:
   m_ObjectHideFlags: 0

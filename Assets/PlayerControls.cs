@@ -12,6 +12,7 @@ public class PlayerControls : MonoBehaviour
     private PopupManager popupManager;
     private Animator animator;
     private SpriteRenderer sprite;
+    private MainCameraScript mainCamera;
 
     [SerializeField] private LayerMask jumpableGround;
 
@@ -39,6 +40,7 @@ public class PlayerControls : MonoBehaviour
         popupManager = GameObject.FindGameObjectWithTag("PopupManager").GetComponent<PopupManager>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        mainCamera = GameObject.Find("Main Camera").GetComponent<MainCameraScript>();
     }
 
     private void OnEnable()
@@ -155,6 +157,7 @@ public class PlayerControls : MonoBehaviour
     {
         freezePlayer();
         GameObject explosion = Instantiate(deathExplosion, rb.position, Quaternion.identity);
+        mainCamera.triggerShake();
         yield return new WaitForSecondsRealtime(2);
         Destroy(explosion);
         logicScript.addLife();
