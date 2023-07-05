@@ -6,3 +6,4 @@ Link to itch.io game: https://khawk24.itch.io/module-15 \
  \
 Module 16 Update: \
 Added animations, added sound effects, updated gravity, and slight adjustments \
+Link to (new) itch.io game: https://khawk24.itch.io/module-16 \
