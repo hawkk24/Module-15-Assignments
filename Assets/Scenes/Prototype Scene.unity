@@ -1628,6 +1628,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Relic2
       objectReference: {fileID: 0}
+    - target: {fileID: 6875784968072129071, guid: ad388c25e120bfe4282e69e3c4eec2da, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad388c25e120bfe4282e69e3c4eec2da, type: 3}
 --- !u!1 &1116558844
@@ -15566,6 +15570,10 @@ PrefabInstance:
     - target: {fileID: 4335559347892091183, guid: ad388c25e120bfe4282e69e3c4eec2da, type: 3}
       propertyPath: m_Name
       value: Relic
+      objectReference: {fileID: 0}
+    - target: {fileID: 6875784968072129071, guid: ad388c25e120bfe4282e69e3c4eec2da, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad388c25e120bfe4282e69e3c4eec2da, type: 3}
