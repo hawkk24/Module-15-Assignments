@@ -20,7 +20,7 @@ public class PlayerControls : MonoBehaviour
     private float horizontalInput = 0f;
     private float verticalInput = 0f;
     private float jumpStartY = 0f;
-    private float animationTime = 0.4f;
+    private float animationTime = 0.3f;
     private bool canPickupRelic = false;
     private GameObject currentRelic = null;
 
