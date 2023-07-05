@@ -10,6 +10,8 @@ public class PlayerControls : MonoBehaviour
     private BoxCollider2D coll;
     private LogicScript logicScript;
     private PopupManager popupManager;
+    private Animator animator;
+    private SpriteRenderer sprite;
 
     [SerializeField] private LayerMask jumpableGround;
 
@@ -17,6 +19,7 @@ public class PlayerControls : MonoBehaviour
     private float horizontalInput = 0f;
     private float verticalInput = 0f;
     private float jumpStartY = 0f;
+    private float animationTime = 0.4f;
     private bool canPickupRelic = false;
     private GameObject currentRelic = null;
 
@@ -34,6 +37,8 @@ public class PlayerControls : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
         logicScript = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
         popupManager = GameObject.FindGameObjectWithTag("PopupManager").GetComponent<PopupManager>();
+        animator = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -63,10 +68,26 @@ public class PlayerControls : MonoBehaviour
     // Movement controls
     private void FixedUpdate()
     {
-        if (!isGrounded() && rb.position.y > jumpStartY + maxHeight)
+        bool isPCGrounded = isGrounded();
+        if (isPCGrounded)
         {
-            verticalInput = 0;
+            animator.SetBool("isFalling", false);
         }
+        else
+        {
+            if (rb.position.y > jumpStartY + maxHeight)
+            {
+                verticalInput = 0;
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", true);
+            }
+            else if (rb.position.y <= jumpStartY + maxHeight && rb.velocity.y < 0)
+            {
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", true);
+            }
+        }
+
         if (isAlive && !popupManager.isPopupOpen)
         {
             rb.velocity = new Vector2(horizontalInput * moveSpeed, verticalInput * jumpSpeed);
@@ -76,11 +97,36 @@ public class PlayerControls : MonoBehaviour
     private void onMovePerformed(InputAction.CallbackContext value)
     {
         horizontalInput = value.ReadValue<Vector2>().x;
+        if (isAlive)
+        {
+            if (horizontalInput > 0)
+            {
+                sprite.flipX = false;
+            }
+            else if (horizontalInput < 0)
+            {
+                sprite.flipX = true;
+            }
+        }
+        animator.SetBool("isRunning", true);
+    }
+
+    private void freezePlayer()
+    {
+        animator.SetBool("isFrozen", true);
+        isAlive = false;
+    }
+
+    private void unfreezePlayer()
+    {
+        animator.SetBool("isFrozen", false);
+        isAlive = true;
     }
 
     private void onMoveCancelleded(InputAction.CallbackContext value)
     {
         horizontalInput = 0;
+        animator.SetBool("isRunning", false);
     }
 
     private void onJumpPerformed(InputAction.CallbackContext value)
@@ -89,12 +135,14 @@ public class PlayerControls : MonoBehaviour
         {
             verticalInput = 1;
             jumpStartY = rb.position.y;
+            animator.SetBool("isJumping", true);
         }
     }
 
     private void onJumpCancelled(InputAction.CallbackContext value)
     {
         verticalInput = 0;
+        animator.SetBool("isJumping", false);
     }
 
     private bool isGrounded()
@@ -105,14 +153,14 @@ public class PlayerControls : MonoBehaviour
     // Relic Pickup Controls/Death trigger
     private IEnumerator deathLogic()
     {
-        isAlive = false;
+        freezePlayer();
         GameObject explosion = Instantiate(deathExplosion, rb.position, Quaternion.identity);
         yield return new WaitForSecondsRealtime(2);
         Destroy(explosion);
         logicScript.addLife();
         Instantiate(spentPC, rb.position, Quaternion.identity);
         rb.position = new Vector2(-4.73f, 0.13f);
-        isAlive = true;
+        unfreezePlayer();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -128,6 +176,7 @@ public class PlayerControls : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Finish")
         {
+            freezePlayer();
             popupManager.showFinishingPopup();
         }
     }
@@ -153,11 +202,21 @@ public class PlayerControls : MonoBehaviour
     {
         if (canPickupRelic && currentRelic is not null)
         {
-            popupManager.showRelicPopup(currentRelic.name);
-            Destroy(currentRelic);
+            freezePlayer();
+            StartCoroutine(openRelic(currentRelic));
             currentRelic = null;
             logicScript.addRelic();
         }
+    }
+
+    private IEnumerator openRelic(GameObject relic)
+    {
+        Animator relicAnimator = relic.GetComponent<Animator>();
+        relicAnimator.SetTrigger("onRelicOpen");
+        yield return new WaitForSeconds(animationTime);
+        string relicName = relic.name;
+        Destroy(relic);
+        popupManager.showRelicPopup(relicName);
     }
 
     // Continue through Popup logic
@@ -166,6 +225,7 @@ public class PlayerControls : MonoBehaviour
         if (popupManager.isPopupOpen)
         {
             popupManager.hidePopup();
+            unfreezePlayer();
         }
     }
 }
