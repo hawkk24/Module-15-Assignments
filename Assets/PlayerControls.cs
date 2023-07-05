@@ -13,6 +13,8 @@ public class PlayerControls : MonoBehaviour
     private Animator animator;
     private SpriteRenderer sprite;
     private MainCameraScript mainCamera;
+    private AudioSource deathSound;
+    private AudioSource finishSound;
 
     [SerializeField] private LayerMask jumpableGround;
 
@@ -41,6 +43,8 @@ public class PlayerControls : MonoBehaviour
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         mainCamera = GameObject.Find("Main Camera").GetComponent<MainCameraScript>();
+        deathSound = GameObject.Find("DeathSound").GetComponent<AudioSource>();
+        finishSound = GameObject.Find("Finish Sound").GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -157,6 +161,7 @@ public class PlayerControls : MonoBehaviour
     {
         freezePlayer();
         GameObject explosion = Instantiate(deathExplosion, rb.position, Quaternion.identity);
+        deathSound.Play();
         mainCamera.triggerShake();
         yield return new WaitForSecondsRealtime(2);
         Destroy(explosion);
@@ -181,6 +186,7 @@ public class PlayerControls : MonoBehaviour
         {
             freezePlayer();
             popupManager.showFinishingPopup();
+            finishSound.Play();
         }
     }
 
@@ -216,6 +222,7 @@ public class PlayerControls : MonoBehaviour
     {
         Animator relicAnimator = relic.GetComponent<Animator>();
         relicAnimator.SetTrigger("onRelicOpen");
+        relic.transform.Find("OpenBoxSound").GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(animationTime);
         string relicName = relic.name;
         Destroy(relic);
