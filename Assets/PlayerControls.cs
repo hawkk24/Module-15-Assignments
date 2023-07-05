@@ -15,7 +15,7 @@ public class PlayerControls : MonoBehaviour
 
     [SerializeField] private LayerMask jumpableGround;
 
-    private bool isAlive = true;
+    private bool isAlive = false;
     private float horizontalInput = 0f;
     private float verticalInput = 0f;
     private float jumpStartY = 0f;
