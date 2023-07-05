@@ -10,12 +10,19 @@ public class PlayerControls : MonoBehaviour
     private BoxCollider2D coll;
     private LogicScript logicScript;
     private PopupManager popupManager;
+    private Animator animator;
+    private SpriteRenderer sprite;
+    private MainCameraScript mainCamera;
+    private AudioSource deathSound;
+    private AudioSource finishSound;
 
     [SerializeField] private LayerMask jumpableGround;
 
-    private bool isAlive = true;
+    private bool isAlive = false;
     private float horizontalInput = 0f;
     private float verticalInput = 0f;
+    private float jumpStartY = 0f;
+    private float animationTime = 0.3f;
     private bool canPickupRelic = false;
     private GameObject currentRelic = null;
 
@@ -33,6 +40,11 @@ public class PlayerControls : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
         logicScript = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
         popupManager = GameObject.FindGameObjectWithTag("PopupManager").GetComponent<PopupManager>();
+        animator = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
+        mainCamera = GameObject.Find("Main Camera").GetComponent<MainCameraScript>();
+        deathSound = GameObject.Find("DeathSound").GetComponent<AudioSource>();
+        finishSound = GameObject.Find("Finish Sound").GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -40,7 +52,7 @@ public class PlayerControls : MonoBehaviour
         input.Enable();
         input.Player.Movement.performed += onMovePerformed;
         input.Player.Movement.canceled += onMoveCancelleded;
-        input.Player.Jump.performed += onJumpStarted;
+        input.Player.Jump.performed += onJumpPerformed;
         input.Player.Jump.canceled += onJumpCancelled;
         input.Player.Interact.started += onInteractStarted;
         input.Player.SelfDestruct.started += onSelfDestructStarted;
@@ -52,7 +64,7 @@ public class PlayerControls : MonoBehaviour
         input.Disable();
         input.Player.Movement.performed -= onMovePerformed;
         input.Player.Movement.canceled -= onMoveCancelleded;
-        input.Player.Jump.started -= onJumpStarted;
+        input.Player.Jump.started -= onJumpPerformed;
         input.Player.Jump.canceled -= onJumpCancelled;
         input.Player.Interact.started -= onInteractStarted;
         input.Player.SelfDestruct.started -= onSelfDestructStarted;
@@ -62,10 +74,26 @@ public class PlayerControls : MonoBehaviour
     // Movement controls
     private void FixedUpdate()
     {
-        if (!isGrounded() && rb.position.y > 1.5)
+        bool isPCGrounded = isGrounded();
+        if (isPCGrounded)
         {
-            verticalInput = 0;
+            animator.SetBool("isFalling", false);
         }
+        else
+        {
+            if (rb.position.y > jumpStartY + maxHeight)
+            {
+                verticalInput = 0;
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", true);
+            }
+            else if (rb.position.y <= jumpStartY + maxHeight && rb.velocity.y < 0)
+            {
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", true);
+            }
+        }
+
         if (isAlive && !popupManager.isPopupOpen)
         {
             rb.velocity = new Vector2(horizontalInput * moveSpeed, verticalInput * jumpSpeed);
@@ -75,24 +103,52 @@ public class PlayerControls : MonoBehaviour
     private void onMovePerformed(InputAction.CallbackContext value)
     {
         horizontalInput = value.ReadValue<Vector2>().x;
+        if (isAlive)
+        {
+            if (horizontalInput > 0)
+            {
+                sprite.flipX = false;
+            }
+            else if (horizontalInput < 0)
+            {
+                sprite.flipX = true;
+            }
+        }
+        animator.SetBool("isRunning", true);
+    }
+
+    private void freezePlayer()
+    {
+        animator.SetBool("isFrozen", true);
+        isAlive = false;
+    }
+
+    private void unfreezePlayer()
+    {
+        animator.SetBool("isFrozen", false);
+        isAlive = true;
     }
 
     private void onMoveCancelleded(InputAction.CallbackContext value)
     {
         horizontalInput = 0;
+        animator.SetBool("isRunning", false);
     }
 
-    private void onJumpStarted(InputAction.CallbackContext value)
+    private void onJumpPerformed(InputAction.CallbackContext value)
     {
         if (isGrounded())
         {
             verticalInput = 1;
+            jumpStartY = rb.position.y;
+            animator.SetBool("isJumping", true);
         }
     }
 
     private void onJumpCancelled(InputAction.CallbackContext value)
     {
         verticalInput = 0;
+        animator.SetBool("isJumping", false);
     }
 
     private bool isGrounded()
@@ -103,14 +159,16 @@ public class PlayerControls : MonoBehaviour
     // Relic Pickup Controls/Death trigger
     private IEnumerator deathLogic()
     {
-        isAlive = false;
+        freezePlayer();
         GameObject explosion = Instantiate(deathExplosion, rb.position, Quaternion.identity);
+        deathSound.Play();
+        mainCamera.triggerShake();
         yield return new WaitForSecondsRealtime(2);
         Destroy(explosion);
         logicScript.addLife();
         Instantiate(spentPC, rb.position, Quaternion.identity);
         rb.position = new Vector2(-4.73f, 0.13f);
-        isAlive = true;
+        unfreezePlayer();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -126,7 +184,9 @@ public class PlayerControls : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Finish")
         {
+            freezePlayer();
             popupManager.showFinishingPopup();
+            finishSound.Play();
         }
     }
 
@@ -151,11 +211,22 @@ public class PlayerControls : MonoBehaviour
     {
         if (canPickupRelic && currentRelic is not null)
         {
-            popupManager.showRelicPopup(currentRelic.name);
-            Destroy(currentRelic);
+            freezePlayer();
+            StartCoroutine(openRelic(currentRelic));
             currentRelic = null;
             logicScript.addRelic();
         }
+    }
+
+    private IEnumerator openRelic(GameObject relic)
+    {
+        Animator relicAnimator = relic.GetComponent<Animator>();
+        relicAnimator.SetTrigger("onRelicOpen");
+        relic.transform.Find("OpenBoxSound").GetComponent<AudioSource>().Play();
+        yield return new WaitForSeconds(animationTime);
+        string relicName = relic.name;
+        Destroy(relic);
+        popupManager.showRelicPopup(relicName);
     }
 
     // Continue through Popup logic
@@ -164,6 +235,7 @@ public class PlayerControls : MonoBehaviour
         if (popupManager.isPopupOpen)
         {
             popupManager.hidePopup();
+            unfreezePlayer();
         }
     }
 }
